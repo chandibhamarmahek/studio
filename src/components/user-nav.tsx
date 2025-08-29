@@ -69,6 +69,11 @@ export function UserNav() {
               Communities
             </DropdownMenuItem>
           </Link>
+           <Link href="/inbox">
+            <DropdownMenuItem>
+              Inbox
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>

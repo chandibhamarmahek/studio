@@ -58,6 +58,7 @@ export function AppSidebar() {
     <aside className="w-64 flex-col border-r bg-card flex">
       <div className="p-4 flex items-center justify-between">
         <Logo />
+        <UserNav />
       </div>
       <div className="flex-1 overflow-y-auto">
         <nav className="grid items-start px-4 text-sm font-medium">
@@ -76,18 +77,11 @@ export function AppSidebar() {
           ))}
         </nav>
       </div>
-      <div className="mt-auto p-4 space-y-4">
-        <Separator />
-        <div className="flex items-center gap-3">
-          <UserNav />
-          <div className="flex-1">
-            <p className="text-sm font-medium leading-none">{user?.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
-          </div>
-          <Button variant="ghost" size="icon" onClick={handleLogout} aria-label="Log out">
-            <LogOut className="h-4 w-4" />
-          </Button>
-        </div>
+      <div className="mt-auto p-4">
+        <Button variant="outline" className="w-full" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Log out
+        </Button>
       </div>
     </aside>
   );
