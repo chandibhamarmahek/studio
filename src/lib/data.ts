@@ -1,6 +1,6 @@
-import { User, Community, Post, Chat } from './types';
+import { User, Community, Post, Chat, Message } from './types';
 
-export const users: User[] = [
+export let users: User[] = [
   {
     id: 'user1',
     name: 'Alex Johnson',
@@ -68,7 +68,7 @@ export const communities: Community[] = [
   },
 ];
 
-export const posts: Post[] = [
+export let posts: Post[] = [
     {
         id: 'post1',
         communityId: 'reactjs',
@@ -91,14 +91,14 @@ export const posts: Post[] = [
     }
 ];
 
-export const chats: Chat[] = [
+export let chats: Chat[] = [
     {
         id: 'chat1',
         participants: ['user1', 'user2'],
         messages: [
             { id: 'msg1', senderId: 'user1', text: 'Hey Maria! I saw your post on state management. Great points!', timestamp: '2:30 PM' },
-            { id: 'msg2', senderId: 'user2', text: 'Thanks, Alex! Glad you found it helpful. I was just looking at your profile, your Node.js skills are impressive.', timestamp: '2:31 PM' },
-            { id: 'msg3', senderId: 'user1', text: 'Thanks! We should collaborate on a project sometime.', timestamp: '2:32 PM' },
+            { id: 'msg2', senderId: 'user2', text: 'Thanks, Alex! Glad you found it helpful. I was just looking at your profile, your Node.js skills are impressive.', timestamp: '2-31 PM' },
+            { id: 'msg3', senderId: 'user1', text: 'Thanks! We should collaborate on a project sometime.', timestamp: '2-32 PM' },
         ]
     },
     {
@@ -108,4 +108,18 @@ export const chats: Chat[] = [
             { id: 'msg4', senderId: 'user3', text: 'Hey Alex, could you help me with a Java question?', timestamp: '10:00 AM' },
         ]
     }
-]
+];
+
+// Functions to modify the data
+export const addPost = (post: Post) => {
+  posts.unshift(post);
+};
+
+export const addMessageToChat = (chatId: string, message: Message) => {
+  const chatIndex = chats.findIndex(c => c.id === chatId);
+  if (chatIndex !== -1) {
+    chats[chatIndex].messages.push(message);
+    return chats[chatIndex];
+  }
+  return null;
+};

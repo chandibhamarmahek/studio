@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { chats, users } from '@/lib/data';
+import { chats as initialChats, users, addMessageToChat, Message } from '@/lib/data';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,6 +18,9 @@ export default function ChatPage() {
   const params = useParams();
   const { user } = useAuth();
   
+  const [chats, setChats] = useState(initialChats);
+  const [newMessage, setNewMessage] = useState('');
+
   const chat = chats.find(c => c.id === params.id);
   
   if (!user || !chat) {
@@ -35,6 +39,25 @@ export default function ChatPage() {
     const initials = names.map(n => n[0]).join('');
     return initials.toUpperCase();
   }
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    const message: Message = {
+      id: `msg${Date.now()}`,
+      senderId: user.id,
+      text: newMessage,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    const updatedChat = addMessageToChat(chat.id, message);
+    if(updatedChat) {
+      setChats(prevChats => prevChats.map(c => c.id === chat.id ? updatedChat : c));
+    }
+    setNewMessage('');
+  };
+
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
@@ -81,13 +104,19 @@ export default function ChatPage() {
           ))}
         </CardContent>
         <CardFooter className="p-4 border-t">
-          <div className="flex w-full items-center space-x-2">
-            <Input type="text" placeholder="Type a message..." className="flex-1" />
-            <Button type="submit" size="icon">
+          <form onSubmit={handleSendMessage} className="flex w-full items-center space-x-2">
+            <Input 
+              type="text" 
+              placeholder="Type a message..." 
+              className="flex-1" 
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+            />
+            <Button type="submit" size="icon" disabled={!newMessage.trim()}>
               <Send className="h-4 w-4" />
               <span className="sr-only">Send</span>
             </Button>
-          </div>
+          </form>
         </CardFooter>
       </Card>
     </div>

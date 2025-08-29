@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +32,17 @@ export function ProfileClientPage({ suggestCommunitiesFn }: ProfileClientPagePro
   const [isSaving, setIsSaving] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [suggestions, setSuggestions] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name,
+        skills: user.skills.join(", "),
+        learningGoals: user.learningGoals,
+        interests: user.interests,
+      });
+    }
+  }, [user]);
 
   if (!user) return null;
 

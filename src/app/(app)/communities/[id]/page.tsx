@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { communities, posts as allPosts, users } from '@/lib/data';
+import { communities, posts as allPosts, users, addPost } from '@/lib/data';
 import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,14 +13,18 @@ import { Separator } from '@/components/ui/separator';
 import { Plus, Check, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 
 export default function CommunityDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { user, joinCommunity, leaveCommunity } = useAuth();
+  const { toast } = useToast();
+
+  const [newPostContent, setNewPostContent] = useState('');
+  const [posts, setPosts] = useState(allPosts.filter(p => p.communityId === params.id));
 
   const community = communities.find(c => c.id === params.id);
-  const posts = allPosts.filter(p => p.communityId === params.id);
   
   if (!community) {
     return <div>Community not found.</div>;
@@ -32,6 +37,28 @@ export default function CommunityDetailPage() {
     const initials = names.map(n => n[0]).join('');
     return initials.toUpperCase();
   }
+
+  const handleCreatePost = () => {
+    if (!user || !newPostContent.trim()) return;
+
+    const newPost = {
+      id: `post${Date.now()}`,
+      communityId: community.id,
+      authorId: user.id,
+      title: newPostContent.split('\n')[0].substring(0, 50), // Use first line as title
+      content: newPostContent,
+      createdAt: 'Just now',
+      replies: [],
+    };
+    
+    addPost(newPost);
+    setPosts(prev => [newPost, ...prev]);
+    setNewPostContent('');
+    toast({
+        title: "Post created!",
+        description: "Your post has been added to the community.",
+    });
+  };
 
   return (
     <>
@@ -56,8 +83,12 @@ export default function CommunityDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid w-full gap-2">
-                  <Textarea placeholder="What's on your mind?" />
-                  <Button>Post</Button>
+                  <Textarea 
+                    placeholder="What's on your mind?" 
+                    value={newPostContent}
+                    onChange={(e) => setNewPostContent(e.target.value)}
+                  />
+                  <Button onClick={handleCreatePost} disabled={!newPostContent.trim()}>Post</Button>
                 </div>
               </CardContent>
             </Card>
