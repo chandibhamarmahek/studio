@@ -26,7 +26,7 @@ export function LoginForm() {
 
     // Simulate network delay
     setTimeout(() => {
-      const success = login(email, interest);
+      const success = login(email, password, interest);
       if (success) {
         router.push('/dashboard');
       } else {
@@ -61,6 +61,7 @@ export function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
+              suppressHydrationWarning={true}
             />
           </div>
           <div className="grid gap-2">
@@ -72,10 +73,11 @@ export function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
+              suppressHydrationWarning={true}
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="interest">Area of Interest</Label>
+            <Label htmlFor="interest">Area of Interest (Optional)</Label>
             <Input
               id="interest"
               type="text"
@@ -83,11 +85,12 @@ export function LoginForm() {
               value={interest}
               onChange={(e) => setInterest(e.target.value)}
               disabled={isLoading}
+              suppressHydrationWarning={true}
             />
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button className="w-full" type="submit" disabled={isLoading} suppressHydrationWarning={true}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign in
           </Button>

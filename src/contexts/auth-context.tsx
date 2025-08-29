@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, interest?: string) => boolean;
+  login: (email: string, password?: string, interest?: string) => boolean;
   logout: () => void;
   updateUserProfile: (updatedUser: Partial<User>) => void;
   joinCommunity: (communityId: string) => void;
@@ -21,29 +21,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const { toast } = useToast();
 
-  const login = useCallback((email: string, interest?: string) => {
+  const login = useCallback((email: string, password?: string, interest?: string) => {
     const foundUser = users.find(u => u.email === email);
-    if (foundUser) {
-      let userToLogin = { ...foundUser };
-      if (interest) {
-        const communityToJoin = communities.find(c => c.name.toLowerCase() === interest.toLowerCase());
-        if (communityToJoin) {
-          if (!userToLogin.joinedCommunityIds.includes(communityToJoin.id)) {
-            userToLogin.joinedCommunityIds = [...userToLogin.joinedCommunityIds, communityToJoin.id];
-          }
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Community not found",
-                description: `We couldn't find a community for "${interest}". Please check the name and try again.`,
-            });
-            return false;
+    
+    if (!foundUser) return false;
+
+    let userToLogin = { ...foundUser };
+    
+    if (interest) {
+      const communityToJoin = communities.find(c => c.name.toLowerCase() === interest.toLowerCase());
+      if (communityToJoin) {
+        if (!userToLogin.joinedCommunityIds.includes(communityToJoin.id)) {
+          userToLogin.joinedCommunityIds = [...userToLogin.joinedCommunityIds, communityToJoin.id];
         }
+      } else {
+          toast({
+              variant: "destructive",
+              title: "Community not found",
+              description: `We couldn't find a community for "${interest}". Please check the name and try again.`,
+          });
+          return false;
       }
-      setUser(userToLogin);
-      return true;
     }
-    return false;
+    
+    setUser(userToLogin);
+    return true;
   }, [toast]);
 
   const logout = useCallback(() => {
