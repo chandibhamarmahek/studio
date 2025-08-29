@@ -4,7 +4,7 @@ import { AuthProvider } from "@/contexts/auth-context";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "LearnVerse",
+  title: "EduConn",
   description: "A peer-to-peer learning platform.",
 };
 
