@@ -14,6 +14,7 @@ import { users } from '@/lib/data';
 export function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [interest, setInterest] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
@@ -25,7 +26,7 @@ export function LoginForm() {
 
     // Simulate network delay
     setTimeout(() => {
-      const success = login(email);
+      const success = login(email, interest);
       if (success) {
         router.push('/dashboard');
       } else {
@@ -70,6 +71,17 @@ export function LoginForm() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="interest">Area of Interest</Label>
+            <Input
+              id="interest"
+              type="text"
+              placeholder="e.g. React, Machine Learning"
+              value={interest}
+              onChange={(e) => setInterest(e.target.value)}
               disabled={isLoading}
             />
           </div>

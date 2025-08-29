@@ -2,12 +2,12 @@
 
 import React, { createContext, useState, useCallback, ReactNode } from 'react';
 import { User } from '@/lib/types';
-import { users } from '@/lib/data';
+import { users, communities } from '@/lib/data';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string) => boolean;
+  login: (email: string, interest?: string) => boolean;
   logout: () => void;
   updateUserProfile: (updatedUser: Partial<User>) => void;
   joinCommunity: (communityId: string) => void;
@@ -19,10 +19,17 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const login = useCallback((email: string) => {
+  const login = useCallback((email: string, interest?: string) => {
     const foundUser = users.find(u => u.email === email);
     if (foundUser) {
-      setUser(foundUser);
+      let userToLogin = { ...foundUser };
+      if (interest) {
+        const communityToJoin = communities.find(c => c.name.toLowerCase() === interest.toLowerCase());
+        if (communityToJoin && !userToLogin.joinedCommunityIds.includes(communityToJoin.id)) {
+            userToLogin.joinedCommunityIds = [...userToLogin.joinedCommunityIds, communityToJoin.id];
+        }
+      }
+      setUser(userToLogin);
       return true;
     }
     return false;
